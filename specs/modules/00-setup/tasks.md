@@ -14,7 +14,7 @@ Tasks run in order. Each one is a single pull request unless noted, and each is 
 
 ## Phase B: experiments
 
-- [ ] **T03. Experiment A, object storage.** `experiments/object-storage/` and a manual workflow that runs the six steps from the plan against SeaweedFS, Garage and RustFS.
+- [x] **T03. Experiment A, object storage.** `experiments/object-storage/` and a manual workflow that runs the six steps from the plan against SeaweedFS, Garage and RustFS.
   Done when: the workflow has run and its log shows a pass or fail per step per candidate.
 
 - [ ] **T04. Decision record 0001.** `docs/decisions/0001-object-storage.md`: the options, the results table, the choice, the reason. **Author** confirms the choice.
