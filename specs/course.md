@@ -113,7 +113,7 @@ Two topics are not left to a single module. Each module that produces data contr
 | Streaming | Kafka | |
 | BI | Metabase | |
 | Data quality | dbt tests | The single quality tool from the gold layer on. Earlier layers use plain Python checks. No dedicated quality framework is added |
-| Data catalog | DataHub | Runs only in the module that uses it. It is the heaviest service in the course, so its memory use is part of the hardware measurement |
+| Data catalog | DataHub | Runs only in module 9. It needs about 4 GiB by itself, so its lab is optional on 8 GB machines |
 | Vector search | Postgres with pgvector | |
 | LLM | A local model in the labs | Each lesson describes the production alternative with a hosted API |
 
@@ -123,7 +123,7 @@ Exact versions are pinned when the environment is built and recorded in `docs/st
 
 - The default path runs entirely on the learner's machine with Docker.
 - Services are grouped so a learner starts only what the current module needs, not the whole platform at once.
-- Target hardware: to be validated in module 0 (see open questions).
+- Hardware: 8 GB of memory minimum, 16 GB recommended. On 8 GB machines the hands-on DataHub lab in module 9 is replaced by a recorded walkthrough. See `docs/decisions/0002-hardware-requirement.md`.
 
 ## 7. Out of scope
 
@@ -139,7 +139,6 @@ Each of these has an owner moment. None blocks module 0.
 | Question | Decision | Resolved when |
 | --- | --- | --- |
 | IMDb data and paid cohorts | Keep IMDb for now. IMDb licenses these datasets for personal and non-commercial use only and does not allow republishing them, which fits free self-paced study but may not fit paid cohorts. Either seek permission or switch to an openly licensed source | Before the first paid cohort |
-| Minimum hardware | Set from a measurement of the environment's real memory use, not from a guess | Module 0 |
 | Local model and runtime | Chosen from what is available when the module is specified | Module 10 spec |
 
 ## 9. Supported platforms

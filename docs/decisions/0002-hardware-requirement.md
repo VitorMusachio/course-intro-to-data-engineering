@@ -1,6 +1,6 @@
 # 0002. Hardware requirement
 
-Status: proposed, awaiting the author's decision
+Status: accepted
 Date: 2026-11-11
 
 ## Context
@@ -55,9 +55,9 @@ Applying the rule of thumb:
 
 ## Decision
 
-Proposed: **option B**.
+**Option B**: 8 GB minimum, 16 GB recommended, with the DataHub lab optional on 8 GB machines. Confirmed by the author on 2026-11-11.
 
-It keeps the course open to the most learners, keeps DataHub, and is honest about the one place where 8 GB is not enough. The author decides.
+It keeps the course open to the most learners, keeps DataHub, and is honest about the one place where 8 GB is not enough.
 
 ## Consequences
 
@@ -66,4 +66,5 @@ Whichever option is chosen:
 - `compose.yaml` sets explicit memory limits: a fixed heap for Trino and a stated driver memory for Spark. No service is left to size itself from the host.
 - `./course doctor` reads how much memory Docker has and warns before a module starts if it is not enough for that module.
 - Each later module measures its own services when it is built and adds a row to this record. If Airflow or the local model turns out heavier than the lakehouse scenario, this decision is revisited before that module is declared done.
-- The README states the requirement from this record, with the caveat about module 9 if option B stands.
+- The README states the requirement from this record, with the caveat about module 9.
+- Module 9 is written in two paths from the start: the hands-on DataHub lab for 16 GB machines, and a recorded walkthrough for 8 GB machines. Its checkpoint skips the catalog checks when DataHub is not running, and says so in its output.

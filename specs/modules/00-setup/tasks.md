@@ -23,7 +23,7 @@ Tasks run in order. Each one is a single pull request unless noted, and each is 
 - [x] **T05. Experiment B, memory.** A manual workflow that measures peak memory for the base environment, for Spark plus Trino plus storage, and for DataHub alone.
   Done when: the workflow has run and its log shows the three figures.
 
-- [ ] **T06. Decision record 0002.** `docs/decisions/0002-hardware-requirement.md`, setting the minimum and recommended memory. If DataHub alone exceeds the minimum, the record lays out the options. **Author** decides.
+- [x] **T06. Decision record 0002.** `docs/decisions/0002-hardware-requirement.md`, setting the minimum and recommended memory. If DataHub alone exceeds the minimum, the record lays out the options. **Author** decides.
   Done when: the record is merged and states one requirement.
 
 ## Phase C: environment
