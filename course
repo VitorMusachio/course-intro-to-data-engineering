@@ -1,0 +1,212 @@
+#!/usr/bin/env bash
+# The one command for this course. Run ./course help for the list.
+#
+# Written for the bash that ships with macOS (3.2) as well as current bash,
+# so it avoids arrays with string keys, mapfile and other newer features.
+set -u
+
+ROOT="$(cd "$(dirname "$0")" && pwd)"
+cd "$ROOT" || exit 1
+
+# Every Compose profile the course defines. `down` and `status` use all of
+# them, so they also see services started for another module.
+ALL_PROFILES="base"
+
+# Memory, in GiB, that Docker should have for the core modules.
+# See docs/decisions/0002-hardware-requirement.md.
+MIN_DOCKER_GIB=4
+
+say()  { printf '%s\n' "$*"; }
+fail() { printf 'error: %s\n' "$*" >&2; exit 1; }
+
+usage() {
+  cat <<'TEXT'
+Usage: ./course <command>
+
+  up [module]      Start the services a module needs (default: module 0)
+  down [--wipe]    Stop everything and remove the containers.
+                   --wipe also deletes the stored data in the object storage
+  status           Show each service and whether it is healthy
+  data [options]   Download the IMDb datasets into ./data
+  check <module>   Run a module's checkpoint
+  doctor           Check that Docker is installed, running and has enough memory
+  help             Show this message
+
+Examples:
+  ./course doctor
+  ./course up
+  ./course data
+  ./course check 0
+TEXT
+}
+
+# Which Compose profiles a module needs. Later modules add cases here.
+profiles_for() {
+  case "$1" in
+    0|00) say "base" ;;
+    *) return 1 ;;
+  esac
+}
+
+# Two-digit folder prefix for a module number: 0 -> 00.
+module_dir() {
+  local n="$1" dir
+  case "$n" in
+    [0-9]) n="0$n" ;;
+  esac
+  for dir in "$ROOT"/modules/"$n"-*; do
+    [ -d "$dir" ] && { say "$dir"; return 0; }
+  done
+  return 1
+}
+
+require_docker() {
+  command -v docker >/dev/null 2>&1 \
+    || fail "Docker is not installed. See the setup section of modules/00-setup/README.md."
+  docker info >/dev/null 2>&1 \
+    || fail "Docker is installed but not running. Start Docker and try again."
+  docker compose version >/dev/null 2>&1 \
+    || fail "Docker Compose v2 is missing. Update Docker to a current version."
+}
+
+require_env_file() {
+  [ -f "$ROOT/.env" ] \
+    || fail "No .env file. Create it with: cp .env.example .env"
+}
+
+compose() {
+  COURSE_UID="$(id -u)" COURSE_GID="$(id -g)" docker compose "$@"
+}
+
+compose_all() {
+  local args="" p
+  for p in $ALL_PROFILES; do args="$args --profile $p"; done
+  # shellcheck disable=SC2086  # word splitting of $args is intended
+  compose $args "$@"
+}
+
+# `docker compose exec` wants -T when there is no terminal, as in CI.
+exec_flags() {
+  if [ -t 0 ] && [ -t 1 ]; then say ""; else say "-T"; fi
+}
+
+toolbox_running() {
+  [ -n "$(compose --profile base ps --quiet --status running toolbox 2>/dev/null)" ]
+}
+
+cmd_up() {
+  local module="${1:-0}" profiles args="" p
+  require_docker
+  require_env_file
+  profiles="$(profiles_for "$module")" \
+    || fail "Module $module is not available yet. Available: 0"
+  for p in $profiles; do args="$args --profile $p"; done
+  say "Starting the services for module $module ..."
+  # shellcheck disable=SC2086
+  if compose $args up --detach --build --wait --wait-timeout 180; then
+    say ""
+    say "Ready."
+    say "  Object storage console: http://localhost:9001"
+    say "  Stop everything with:   ./course down"
+  else
+    say ""
+    compose_all ps --all
+    fail "The services did not become healthy within 3 minutes. See the troubleshooting section of modules/00-setup/README.md."
+  fi
+}
+
+cmd_down() {
+  require_docker
+  case "${1:-}" in
+    "")     compose_all down --remove-orphans ;;
+    --wipe) compose_all down --remove-orphans --volumes ;;
+    *)      fail "Unknown option for down: $1" ;;
+  esac
+}
+
+cmd_status() {
+  require_docker
+  compose_all ps --all
+}
+
+cmd_data() {
+  require_docker
+  require_env_file
+  toolbox_running || fail "The environment is not running. Start it with: ./course up"
+  # shellcheck disable=SC2046
+  compose --profile base exec $(exec_flags) toolbox python scripts/download_data.py "$@"
+}
+
+cmd_check() {
+  local module="${1:-}" dir
+  [ -n "$module" ] || fail "Which module? Example: ./course check 0"
+  require_docker
+  require_env_file
+  dir="$(module_dir "$module")" || fail "There is no module $module."
+  if ! ls "$dir"/checkpoint/test_*.py >/dev/null 2>&1; then
+    fail "Module $module has no checkpoint yet."
+  fi
+  toolbox_running || fail "The environment is not running. Start it with: ./course up $module"
+  # shellcheck disable=SC2046
+  compose --profile base exec $(exec_flags) toolbox \
+    pytest "modules/$(basename "$dir")/checkpoint" -p no:cacheprovider
+}
+
+cmd_doctor() {
+  local problems=0 bytes gib
+  if command -v docker >/dev/null 2>&1; then
+    say "ok    Docker is installed: $(docker --version)"
+  else
+    say "FAIL  Docker is not installed"
+    exit 1
+  fi
+  if docker info >/dev/null 2>&1; then
+    say "ok    Docker is running"
+  else
+    say "FAIL  Docker is installed but not running"
+    exit 1
+  fi
+  if docker compose version >/dev/null 2>&1; then
+    say "ok    Docker Compose: $(docker compose version --short)"
+  else
+    say "FAIL  Docker Compose v2 is missing"
+    problems=1
+  fi
+  bytes="$(docker info --format '{{.MemTotal}}' 2>/dev/null)"
+  case "$bytes" in
+    ''|*[!0-9]*) say "warn  Could not read how much memory Docker has" ;;
+    *)
+      gib=$(( bytes / 1024 / 1024 / 1024 ))
+      if [ "$gib" -ge 8 ]; then
+        say "ok    Docker has about $gib GiB of memory: enough for every module"
+      elif [ "$gib" -ge "$MIN_DOCKER_GIB" ]; then
+        say "ok    Docker has about $gib GiB of memory: enough for every module except the hands-on DataHub lab in module 9"
+      else
+        say "FAIL  Docker has about $gib GiB of memory. The course needs at least $MIN_DOCKER_GIB GiB. Raise the limit in Docker's settings"
+        problems=1
+      fi
+      ;;
+  esac
+  if [ -f "$ROOT/.env" ]; then
+    say "ok    .env exists"
+  else
+    say "FAIL  No .env file. Create it with: cp .env.example .env"
+    problems=1
+  fi
+  [ "$problems" -eq 0 ] || exit 1
+  say ""
+  say "Everything looks good. Next: ./course up"
+}
+
+command="${1:-help}"
+[ $# -gt 0 ] && shift
+case "$command" in
+  up)      cmd_up "$@" ;;
+  down)    cmd_down "$@" ;;
+  status)  cmd_status "$@" ;;
+  data)    cmd_data "$@" ;;
+  check)   cmd_check "$@" ;;
+  doctor)  cmd_doctor "$@" ;;
+  help|-h|--help) usage ;;
+  *) usage >&2; fail "Unknown command: $command" ;;
+esac

@@ -42,3 +42,73 @@ jobs:
           echo "not a dataset" > data/example.tsv.gz
           git check-ignore --quiet data/example.tsv.gz
           test -z "$(git status --porcelain)"
+
+  environment:
+    name: Base environment
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Lint the course command
+        run: |
+          shellcheck course
+          # macOS ships bash 3.2: the script must at least parse there.
+          docker run --rm -v "$PWD:/w:ro" bash:3.2 bash -n /w/course
+
+      - name: A clear message when .env is missing
+        run: |
+          if ./course up 2> /tmp/err.txt; then
+            echo "expected ./course up to fail without .env"; exit 1
+          fi
+          cat /tmp/err.txt
+          grep -q "cp .env.example .env" /tmp/err.txt
+
+      - name: Create .env
+        run: cp .env.example .env
+
+      - name: ./course doctor
+        run: ./course doctor
+
+      - name: ./course up
+        run: ./course up
+
+      - name: ./course status
+        run: ./course status
+
+      - name: The toolbox can use the object storage
+        run: |
+          docker compose --profile base exec -T toolbox python - <<'PY'
+          import boto3
+
+          s3 = boto3.client("s3")
+          s3.create_bucket(Bucket="ci-smoke")
+          s3.put_object(Bucket="ci-smoke", Key="hello.txt", Body=b"hello")
+          assert s3.get_object(Bucket="ci-smoke", Key="hello.txt")["Body"].read() == b"hello"
+          s3.delete_object(Bucket="ci-smoke", Key="hello.txt")
+          s3.delete_bucket(Bucket="ci-smoke")
+          print("object storage round trip ok, boto3", boto3.__version__)
+          PY
+
+      - name: ./course data downloads once, then nothing
+        run: |
+          ./course data --only title.ratings.tsv.gz | tee /tmp/first.txt
+          grep -qx "DOWNLOADED 1" /tmp/first.txt
+          ./course data --only title.ratings.tsv.gz | tee /tmp/second.txt
+          grep -qx "DOWNLOADED 0" /tmp/second.txt
+          test "$(stat -c %u data/imdb/title.ratings.tsv.gz)" = "$(id -u)"
+
+      - name: Nothing to commit after all of that
+        run: |
+          git status --short
+          test -z "$(git status --porcelain)"
+
+      - name: ./course down removes every container
+        run: |
+          ./course down
+          test -z "$(docker ps --all --quiet --filter label=com.docker.compose.project=course)"
+
+      - name: Service logs, if something failed
+        if: failure()
+        run: docker compose --profile base logs --tail 80 || true
+
