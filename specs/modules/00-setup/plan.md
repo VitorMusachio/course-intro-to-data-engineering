@@ -24,7 +24,7 @@ scripts/
 data/                       git-ignored; datasets land here
 docs/
   architecture.md           diagram of the final platform
-  stack.md                  every tool and its pinned version
+  stack.md                  every tool and where its version is pinned
   data-dictionary.md        starts here, grows with every module
   decisions/                one short record per design decision
 experiments/                throwaway code behind the decision records
@@ -53,6 +53,8 @@ A single bash script at the repository root. Bash is present on Linux, macOS and
 | `./course status` | Shows each service and its health |
 | `./course data` | Downloads the IMDb datasets |
 | `./course check <module>` | Runs that module's checkpoint |
+| `./course run <command>` | Runs a command in the toolbox |
+| `./course shell` | Opens a shell in the toolbox |
 | `./course doctor` | Checks Docker itself: installed, running, enough memory allocated |
 
 Make was considered and rejected: it is not installed by default on every supported platform, and its syntax is one more thing for a beginner to read.

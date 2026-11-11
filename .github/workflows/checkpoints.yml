@@ -126,6 +126,38 @@ jobs:
           test "$(grep -c -E '^(pass|skip|FAIL)  [1-9]\. ' /tmp/check.txt)" -eq 9
           ! grep -q '^FAIL' /tmp/check.txt
 
+      - name: The lab's first look at the data works as written
+        run: |
+          ./course run python -c "
+          import gzip
+          with gzip.open('data/imdb/title.ratings.tsv.gz', 'rt') as f:
+              for _ in range(5):
+                  print(f.readline().rstrip())
+          " | tee /tmp/look.txt
+          head -1 /tmp/look.txt | grep -q "tconst"
+          test "$(wc -l < /tmp/look.txt)" -eq 5
+
+      - name: The object storage console answers
+        run: curl --fail --silent --show-error --location --output /dev/null http://localhost:9001/
+
+      - name: The exercise starter runs and says what is left to do
+        run: |
+          ./course run python modules/00-setup/exercise/upload_dataset.py | tee /tmp/starter.txt
+          grep -q "TODO" /tmp/starter.txt
+
+      - name: The solution completes the exercise
+        run: |
+          ./course run python modules/00-setup/solution/upload_dataset.py | tee /tmp/solution.txt
+          grep -q "imdb/title.ratings.tsv.gz" /tmp/solution.txt
+          # Running it twice must also work.
+          ./course run python modules/00-setup/solution/upload_dataset.py > /dev/null
+
+      - name: Editing an exercise file does not fail the checkpoint
+        run: |
+          cp modules/00-setup/solution/upload_dataset.py modules/00-setup/exercise/upload_dataset.py
+          ./course check 0
+          git checkout -- modules/00-setup/exercise/upload_dataset.py
+
       - name: The checkpoint fails when a criterion is broken
         run: |
           touch stray-file.txt
