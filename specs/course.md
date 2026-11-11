@@ -23,12 +23,13 @@ A learner who can already program a little and wants to become productive in a d
 1. Ingest data in batch, incremental and streaming modes, and explain when each fits.
 2. Store data in object storage using open file and table formats.
 3. Transform data with Spark and with SQL (dbt), following a medallion layout: bronze, silver, gold.
-4. Model data dimensionally and document it.
+4. Model data dimensionally.
 5. Orchestrate a pipeline end to end, with scheduling and backfills.
-6. Test data, enforce schema contracts and run those checks in CI.
+6. Write data quality checks at every layer, enforce schema contracts, monitor freshness and run those checks in CI.
 7. Serve curated data to a BI tool.
 8. Build an AI application on top of curated data: an embeddings pipeline, retrieval-augmented generation with a measured evaluation, and an agent that queries the gold layer.
-9. Explain, for each piece, how the laptop setup differs from a production deployment.
+9. Document a data platform: a data dictionary, lineage, and the decisions behind it.
+10. Explain, for each piece, how the laptop setup differs from a production deployment.
 
 ## 3. The project
 
@@ -66,12 +67,36 @@ Airflow orchestrates every step. CI runs the data tests.
 | 5 | The lakehouse | Tables with ACID guarantees, schema evolution and time travel, queried with SQL | Delta Lake, Trino |
 | 6 | Modeling and transformation with dbt | The gold layer: facts and dimensions, tested and documented | dbt, Trino |
 | 7 | Orchestration with Airflow | DAGs that connect ingestion, Spark and dbt, with backfills and asset-based scheduling | Airflow 3 |
-| 8 | Data quality and CI | Data tests, schema contracts and a CI pipeline that blocks regressions | dbt tests, GitHub Actions |
+| 8 | Data quality and CI | A quality strategy across all layers: data tests, schema contracts, freshness checks, failures surfaced in the orchestrator, and a CI pipeline that blocks regressions | dbt tests, GitHub Actions |
 | 9 | Serving and BI | A dashboard on the gold layer | Trino, Metabase |
 | 10 | AI on the data platform | An embeddings pipeline, RAG with evaluation, and an agent that queries the gold layer | Postgres with pgvector, a local model, MCP |
 | 11 | Capstone | The whole project, documented and published. Optional cloud deployment track | Everything above, optional cloud |
 
 Modules are specified and built in order. This table is the intent; each module's own spec is the authority once it exists.
+
+### Threads that run through every module
+
+Two topics are not left to a single module. Each module that produces data contributes to both.
+
+**Data quality**
+
+| Where | What the learner adds |
+| --- | --- |
+| Module 1 | Unit tests for transformation code |
+| Modules 2 and 3 (bronze) | Checks on arrival: expected files, schema, row counts |
+| Modules 4 and 5 (silver) | Checks on content: nulls, uniqueness, types, accepted values |
+| Module 6 (gold) | dbt tests on keys, relationships and business rules |
+| Module 7 | Checks run as pipeline steps, and a failed check stops the run |
+| Module 8 | The pieces become one strategy: which check belongs at which layer, schema contracts, freshness, and CI |
+
+**Documentation**
+
+| Where | What the learner adds |
+| --- | --- |
+| Every module that produces data | Entries in the project's data dictionary: each table, each column, its meaning and its source |
+| Module 6 | Generated dbt documentation with lineage |
+| Modules with a design choice | A short decision record: the options, the choice, the reason |
+| Module 11 | The project README a hiring manager would read: architecture, how to run it, what it demonstrates |
 
 ## 5. Stack decisions
 

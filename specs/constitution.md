@@ -58,6 +58,7 @@ A module is done when:
 - the lesson, lab, exercise and solution exist and follow the module format;
 - a learner who completed the previous modules can finish it without outside help;
 - every tool version it uses is recorded in `docs/stack.md`;
+- every table it produces has at least one data quality check and an entry in the data dictionary;
 - the root `README.md` syllabus links to it.
 
 ## 6. Data
