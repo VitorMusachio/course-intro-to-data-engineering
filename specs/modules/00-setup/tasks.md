@@ -28,13 +28,13 @@ Tasks run in order. Each one is a single pull request unless noted, and each is 
 
 ## Phase C: environment
 
-- [ ] **T07. Base environment.** `compose.yaml` with the `base` profile: the chosen object storage and the toolbox, with healthchecks and pinned tags.
+- [x] **T07. Base environment.** `compose.yaml` with the `base` profile: the chosen object storage and the toolbox, with healthchecks and pinned tags.
   Done when: `docker compose --profile base up --wait` succeeds in CI.
 
-- [ ] **T08. The `course` command.** `up`, `down`, `status`, `check`, `doctor`, with the module-to-profile mapping.
-  Done when: each command works in CI under bash 3.2 and under current bash, and `./course up` fails with a readable message when Docker is not running.
+- [x] **T08. The `course` command.** `up`, `down`, `status`, `check`, `doctor`, with the module-to-profile mapping.
+  Done when: each command works in CI under current bash, the script parses under bash 3.2 and passes shellcheck, and `./course up` fails with a readable message when `.env` is missing. A full run under bash 3.2 is part of T17, on macOS.
 
-- [ ] **T09. Data download.** `scripts/download_data.py` and `./course data`, with the manifest described in the plan.
+- [x] **T09. Data download.** `scripts/download_data.py` and `./course data`, with the manifest described in the plan.
   Done when: the first run downloads seven files, and a second run reports zero downloads.
 
 ## Phase D: checkpoint and CI

@@ -17,8 +17,10 @@ LICENSE                     MIT, code
 LICENSE-CONTENT.md          CC BY-NC-SA 4.0, lessons
 docker/
   toolbox/Dockerfile        Python, uv, pytest and the S3 client used by checkpoints
+config/
+  sources.yml               declares which files enter the pipeline
 scripts/
-  download_data.py          fetches the IMDb files, idempotent
+  download_data.py          downloads what sources.yml declares, idempotent
 data/                       git-ignored; datasets land here
 docs/
   architecture.md           diagram of the final platform
@@ -80,7 +82,8 @@ Some criteria are about the host, not the platform: the environment starts from 
 
 ### 3.4 Data download
 
-- Source: the seven IMDb dataset files.
+- Sources and files are declared in `config/sources.yml`, not in code. The script downloads what is declared there, and later modules read the same file. It starts with the seven IMDb dataset files.
+- The script validates the declarations before downloading anything: required fields, an https URL, a target folder under `data/`, plain file names, and dataset names that are unique.
 - The script records each file's size and last-modified header in a small manifest under `data/`. A second run compares against the server and skips files that have not changed. This is what satisfies "a second run downloads nothing".
 - Files stay compressed on disk. Decompression is part of module 2, where file formats are taught.
 - IMDb refreshes the data daily, so two learners can hold different snapshots. Checkpoints therefore assert on structure and invariants (columns, uniqueness, plausible ranges), never on exact row counts.
