@@ -1,6 +1,6 @@
 # 0001. Local object storage
 
-Status: proposed, awaiting the author's confirmation
+Status: accepted
 Date: 2026-11-11
 
 ## Context
@@ -43,7 +43,7 @@ Notes on the evidence:
 
 ## Decision
 
-Proposed: **RustFS**, pinned to `1.0.0`, with SeaweedFS as the documented fallback.
+**RustFS**, pinned to `1.0.0`, with SeaweedFS as the documented fallback. Confirmed by the author on 2026-11-11.
 
 Garage is ruled out by the Iceberg failure.
 

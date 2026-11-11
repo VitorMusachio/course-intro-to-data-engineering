@@ -104,7 +104,7 @@ Two topics are not left to a single module. Each module that produces data contr
 | Concern | Choice | Notes |
 | --- | --- | --- |
 | Orchestration | Airflow 3.x | The 2.x line reached end of life in April 2026 |
-| Object storage, local | SeaweedFS, Garage or RustFS | To be chosen by a compatibility test with Iceberg and Spark. MinIO is excluded: its community edition is no longer maintained |
+| Object storage, local | RustFS | Chosen by experiment: see `docs/decisions/0001-object-storage.md`. SeaweedFS is the fallback. MinIO is excluded: its community edition is no longer maintained |
 | Object storage, cloud track | Cloudflare R2 | Optional. S3-compatible, with a free tier |
 | Processing | Spark 4.x | |
 | Table format | Iceberg | |
@@ -140,7 +140,6 @@ Each of these has an owner moment. None blocks module 0.
 | --- | --- | --- |
 | IMDb data and paid cohorts | Keep IMDb for now. IMDb licenses these datasets for personal and non-commercial use only and does not allow republishing them, which fits free self-paced study but may not fit paid cohorts. Either seek permission or switch to an openly licensed source | Before the first paid cohort |
 | Minimum hardware | Set from a measurement of the environment's real memory use, not from a guess | Module 0 |
-| Local object storage | Chosen by a compatibility test of SeaweedFS, Garage and RustFS with Iceberg and Spark | Module 0 |
 | Local model and runtime | Chosen from what is available when the module is specified | Module 10 spec |
 
 ## 9. Supported platforms

@@ -17,7 +17,7 @@ Tasks run in order. Each one is a single pull request unless noted, and each is 
 - [x] **T03. Experiment A, object storage.** `experiments/object-storage/` and a manual workflow that runs the six steps from the plan against SeaweedFS, Garage and RustFS.
   Done when: the workflow has run and its log shows a pass or fail per step per candidate.
 
-- [ ] **T04. Decision record 0001.** `docs/decisions/0001-object-storage.md`: the options, the results table, the choice, the reason. **Author** confirms the choice.
+- [x] **T04. Decision record 0001.** `docs/decisions/0001-object-storage.md`: the options, the results table, the choice, the reason. **Author** confirms the choice.
   Done when: the record is merged and names one candidate.
 
 - [ ] **T05. Experiment B, memory.** A manual workflow that measures peak memory for the base environment, for Spark plus Trino plus storage, and for DataHub alone.
