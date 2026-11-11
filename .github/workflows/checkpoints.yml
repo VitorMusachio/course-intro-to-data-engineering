@@ -105,7 +105,7 @@ jobs:
       # IMDb refreshes its files daily. A weekly cache keeps runs short and
       # still exercises the download regularly.
       - name: Dataset cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: data/imdb
           key: imdb-${{ steps.week.outputs.key }}
