@@ -39,10 +39,10 @@ Tasks run in order. Each one is a single pull request unless noted, and each is 
 
 ## Phase D: checkpoint and CI
 
-- [ ] **T10. Module 0 checkpoint.** `modules/00-setup/checkpoint/`: one pytest test per criterion that can be checked from inside the platform, plus the host checks in `./course check`.
+- [x] **T10. Module 0 checkpoint.** `modules/00-setup/checkpoint/`: one pytest test per criterion that can be checked from inside the platform, plus the host checks in `./course check`.
   Done when: `./course check 00` prints nine lines, one per criterion, and exits non-zero if any fails.
 
-- [ ] **T11. CI workflow.** `.github/workflows/checkpoints.yml` as described in the plan, including the data cache, the "no containers left" and "git status clean" assertions, and a secret scan.
+- [x] **T11. CI workflow.** `.github/workflows/checkpoints.yml` as described in the plan, including the data cache, the "no containers left" and "git status clean" assertions, and a secret scan.
   Done when: the workflow is green on a pull request, and red on a branch where one criterion is deliberately broken.
 
 ## Phase E: content
