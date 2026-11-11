@@ -138,7 +138,11 @@ jobs:
           test "$(wc -l < /tmp/look.txt)" -eq 5
 
       - name: The object storage console answers
-        run: curl --fail --silent --show-error --location --output /dev/null http://localhost:9001/
+        run: |
+          for url in http://localhost:9001/rustfs/console/ http://localhost:9001/rustfs/console/index.html http://localhost:9000/rustfs/console/ http://localhost:9001/ http://localhost:9000/; do
+            echo "$(curl --silent --location --output /dev/null --write-out '%{http_code} %{url_effective}' "$url") <- $url"
+          done
+          curl --fail --silent --show-error --location --output /dev/null http://localhost:9001/rustfs/console/
 
       - name: The exercise starter runs and says what is left to do
         run: |
