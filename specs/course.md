@@ -42,7 +42,7 @@ IMDb datasets
 [ingestion] --> bronze (raw files, object storage)
                    |
                    v  Spark
-                silver (cleaned, typed, Delta tables)
+                silver (cleaned, typed, Iceberg tables)
                    |
                    v  dbt on Trino
                  gold (facts and dimensions)
@@ -64,7 +64,7 @@ Airflow orchestrates every step. CI runs the data tests.
 | 2 | Object storage and file formats | The bronze layer: raw, partitioned data in a bucket | S3-compatible storage, Parquet |
 | 3 | Ingestion patterns | Three ingestions of the same source: batch, incremental, streaming | Python, Kafka |
 | 4 | Processing with Spark | The silver layer: cleaning and standardizing with the DataFrame API and Spark SQL | Spark |
-| 5 | The lakehouse | Tables with ACID guarantees, schema evolution and time travel, queried with SQL | Delta Lake, Trino |
+| 5 | The lakehouse | Tables with ACID guarantees, schema evolution and time travel, queried with SQL | Iceberg, Trino |
 | 6 | Modeling and transformation with dbt | The gold layer: facts and dimensions, tested and documented | dbt, Trino |
 | 7 | Orchestration with Airflow | DAGs that connect ingestion, Spark and dbt, with backfills and asset-based scheduling | Airflow 3 |
 | 8 | Data quality and CI | A quality strategy across all layers: data tests, schema contracts, freshness checks, failures surfaced in the orchestrator, and a CI pipeline that blocks regressions | dbt tests, GitHub Actions |
@@ -103,10 +103,10 @@ Two topics are not left to a single module. Each module that produces data contr
 | Concern | Choice | Notes |
 | --- | --- | --- |
 | Orchestration | Airflow 3.x | The 2.x line reached end of life in April 2026 |
-| Object storage, local | SeaweedFS, Garage or RustFS | To be chosen by a compatibility test with Delta Lake, Spark and Trino. MinIO is excluded: its community edition is no longer maintained |
+| Object storage, local | SeaweedFS, Garage or RustFS | To be chosen by a compatibility test with Iceberg and Spark. MinIO is excluded: its community edition is no longer maintained |
 | Object storage, cloud track | Cloudflare R2 | Optional. S3-compatible, with a free tier |
 | Processing | Spark 4.x | |
-| Table format | Delta Lake | The lesson compares it with Iceberg and explains when a team would pick each |
+| Table format | Iceberg | |
 | Query engine | Trino | |
 | Transformation | dbt | |
 | Streaming | Kafka | |
@@ -137,7 +137,7 @@ Each of these has an owner moment. None blocks module 0.
 | --- | --- | --- |
 | IMDb data and paid cohorts | Keep IMDb for now. IMDb licenses these datasets for personal and non-commercial use only and does not allow republishing them, which fits free self-paced study but may not fit paid cohorts. Either seek permission or switch to an openly licensed source | Before the first paid cohort |
 | Minimum hardware | Set from a measurement of the environment's real memory use, not from a guess | Module 0 |
-| Local object storage | Chosen by a compatibility test of SeaweedFS, Garage and RustFS with Delta Lake, Spark and Trino | Module 0 |
+| Local object storage | Chosen by a compatibility test of SeaweedFS, Garage and RustFS with Iceberg and Spark | Module 0 |
 | Local model and runtime | Chosen from what is available when the module is specified | Module 10 spec |
 
 ## 9. Supported platforms

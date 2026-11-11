@@ -63,5 +63,5 @@ Each criterion is checked by a command. Together they are the module 0 checkpoin
 ## 8. To resolve while building this module
 
 1. **Minimum hardware.** Measure the base environment's memory use and set the stated requirement from the measurement.
-2. **Local object storage.** Run the compatibility test of SeaweedFS, Garage and RustFS with Delta Lake, Spark and Trino, and record the choice, with the reason, in `docs/stack.md`.
+2. **Local object storage.** Run the compatibility test of SeaweedFS, Garage and RustFS with Iceberg and Spark, and record the choice, with the reason, in `docs/stack.md`.
 3. **Checkpoint tooling.** The plan compares a plain shell script, pytest and a small task runner, and recommends one, favouring whatever a beginner can read.
