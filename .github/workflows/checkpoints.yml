@@ -98,10 +98,42 @@ jobs:
           grep -qx "DOWNLOADED 0" /tmp/second.txt
           test "$(stat -c %u data/imdb/title.ratings.tsv.gz)" = "$(id -u)"
 
+      - name: Week number, for the dataset cache
+        id: week
+        run: echo "key=$(date +%G-%V)" >> "$GITHUB_OUTPUT"
+
+      # IMDb refreshes its files daily. A weekly cache keeps runs short and
+      # still exercises the download regularly.
+      - name: Dataset cache
+        uses: actions/cache@v4
+        with:
+          path: data/imdb
+          key: imdb-${{ steps.week.outputs.key }}
+
+      - name: ./course data, every declared dataset
+        run: ./course data
+
       - name: Nothing to commit after all of that
         run: |
           git status --short
           test -z "$(git status --porcelain)"
+
+      - name: ./course check 0
+        run: |
+          ./course check 0 | tee /tmp/check.txt
+          test "${PIPESTATUS[0]}" -eq 0
+          # One line per criterion, none failing.
+          test "$(grep -c -E '^(pass|skip|FAIL)  [1-9]\. ' /tmp/check.txt)" -eq 9
+          ! grep -q '^FAIL' /tmp/check.txt
+
+      - name: The checkpoint fails when a criterion is broken
+        run: |
+          touch stray-file.txt
+          if ./course check 0 > /tmp/broken.txt; then
+            echo "expected the checkpoint to fail with an untracked file"; exit 1
+          fi
+          rm stray-file.txt
+          grep -E '^FAIL  5\. ' /tmp/broken.txt
 
       - name: ./course down removes every container
         run: |
@@ -111,4 +143,17 @@ jobs:
       - name: Service logs, if something failed
         if: failure()
         run: docker compose --profile base logs --tail 80 || true
+
+  secrets:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Scan the whole history for credentials
+        run: |
+          docker run --rm -v "$PWD:/repo" ghcr.io/gitleaks/gitleaks:latest \
+            git /repo --config /repo/.gitleaks.toml --redact --no-banner --verbose
 

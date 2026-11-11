@@ -123,6 +123,11 @@ cmd_down() {
     --wipe) compose_all down --remove-orphans --volumes ;;
     *)      fail "Unknown option for down: $1" ;;
   esac
+  if [ -n "$(compose_all ps --all --quiet 2>/dev/null)" ]; then
+    compose_all ps --all
+    fail "Some containers are still there. Try ./course down again, or remove them with docker rm."
+  fi
+  say "Stopped. No course containers are left."
 }
 
 cmd_status() {
@@ -148,9 +153,31 @@ cmd_check() {
     fail "Module $module has no checkpoint yet."
   fi
   toolbox_running || fail "The environment is not running. Start it with: ./course up $module"
+
+  # Facts about this machine that a test inside a container cannot see.
+  local running health git_state git_changes env_ignored env_tracked
+  running="$(compose_all ps --status running --services 2>/dev/null | tr '\n' ' ')"
+  health="$(compose_all ps --format '{{.Service}}={{.Health}}' 2>/dev/null | tr '\n' ' ')"
+  if git -C "$ROOT" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    git_changes="$(git -C "$ROOT" status --porcelain | head -5 | tr '\n' ';')"
+    if [ -z "$git_changes" ]; then git_state=clean; else git_state=dirty; fi
+    if git -C "$ROOT" check-ignore -q .env; then env_ignored=yes; else env_ignored=no; fi
+    if git -C "$ROOT" ls-files --error-unmatch .env >/dev/null 2>&1; then env_tracked=yes; else env_tracked=no; fi
+  else
+    git_state=nogit; git_changes=""; env_ignored=nogit; env_tracked=nogit
+  fi
+
   # shellcheck disable=SC2046
-  compose --profile base exec $(exec_flags) toolbox \
-    pytest "modules/$(basename "$dir")/checkpoint" -p no:cacheprovider
+  compose --profile base exec $(exec_flags) \
+    -e COURSE_HOST_RUNNING="$running" \
+    -e COURSE_HOST_HEALTH="$health" \
+    -e COURSE_HOST_GIT="$git_state" \
+    -e COURSE_HOST_GIT_CHANGES="$git_changes" \
+    -e COURSE_HOST_ENV_IGNORED="$env_ignored" \
+    -e COURSE_HOST_ENV_TRACKED="$env_tracked" \
+    -e CI="${CI:-}" \
+    toolbox \
+    pytest "modules/$(basename "$dir")/checkpoint" -q --no-header --tb=short -p no:cacheprovider
 }
 
 cmd_doctor() {

@@ -1,0 +1,14 @@
+# Secret scanning rules for CI.
+# The default rules apply everywhere except the paths below, which hold
+# placeholder credentials for services that only run on the local machine.
+title = "course-intro-to-data-engineering"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Placeholder credentials for local-only services"
+paths = [
+  '''^\.env\.example$''',
+  '''^experiments/''',
+]
