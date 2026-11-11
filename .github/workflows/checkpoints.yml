@@ -1,0 +1,44 @@
+name: Checkpoints
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  toolbox:
+    name: Toolbox image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build the toolbox image
+        run: docker build --tag course-toolbox docker/toolbox
+
+      - name: Check the tools inside it
+        run: |
+          docker run --rm course-toolbox python --version
+          docker run --rm course-toolbox uv --version
+          docker run --rm course-toolbox pytest --version
+          docker run --rm course-toolbox python -c "import boto3; print('boto3', boto3.__version__)"
+
+  repository:
+    name: Repository rules
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: .env cannot be committed
+        run: |
+          cp .env.example .env
+          git check-ignore --quiet .env
+          test -z "$(git status --porcelain)"
+
+      - name: data/ contents cannot be committed
+        run: |
+          echo "not a dataset" > data/example.tsv.gz
+          git check-ignore --quiet data/example.tsv.gz
+          test -z "$(git status --porcelain)"
