@@ -22,7 +22,21 @@ jobs:
       matrix:
         candidate: [seaweedfs, garage, rustfs]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Run the experiment
         run: bash experiments/object-storage/run.sh ${{ matrix.candidate }}
+
+  memory:
+    name: Memory (${{ matrix.scenario }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        scenario: [base, lakehouse, datahub]
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Run the experiment
+        run: bash experiments/memory/run.sh ${{ matrix.scenario }}
