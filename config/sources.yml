@@ -1,0 +1,55 @@
+# Data sources of the course pipeline.
+#
+# This file is the single place that says which files enter the pipeline.
+# `./course data` downloads exactly what is declared here, and later modules
+# read the same declarations instead of repeating file names in code.
+#
+# To add a file, add an entry under a source's `files`.
+# To add a source, add a new key under `sources` with the same fields.
+#
+# Fields of a source:
+#   description   what the source is
+#   base_url      every file is downloaded from base_url + file name
+#   target        folder under the repository where the files land (git-ignored)
+#   terms         where the terms of use are published
+#   files         the files to download
+#
+# Fields of a file:
+#   name          file name on the server, and on disk
+#   dataset       short name the pipeline uses for this file's data
+#   description   what one row represents
+
+sources:
+  imdb:
+    description: IMDb Non-Commercial Datasets, refreshed daily by IMDb
+    base_url: https://datasets.imdbws.com/
+    target: data/imdb
+    terms: https://developer.imdb.com/non-commercial-datasets/
+    files:
+      - name: name.basics.tsv.gz
+        dataset: name_basics
+        description: One row per person, with birth year, professions and known titles
+
+      - name: title.akas.tsv.gz
+        dataset: title_akas
+        description: One row per localized or alternative name of a title
+
+      - name: title.basics.tsv.gz
+        dataset: title_basics
+        description: One row per title, with type, year, runtime and genres
+
+      - name: title.crew.tsv.gz
+        dataset: title_crew
+        description: One row per title, with its directors and writers
+
+      - name: title.episode.tsv.gz
+        dataset: title_episode
+        description: One row per episode, linking it to its series, season and number
+
+      - name: title.principals.tsv.gz
+        dataset: title_principals
+        description: One row per person credited in a title, with the role
+
+      - name: title.ratings.tsv.gz
+        dataset: title_ratings
+        description: One row per title, with its average rating and number of votes

@@ -27,7 +27,8 @@ Usage: ./course <command>
   down [--wipe]    Stop everything and remove the containers.
                    --wipe also deletes the stored data in the object storage
   status           Show each service and whether it is healthy
-  data [options]   Download the IMDb datasets into ./data
+  data [options]   Download the datasets declared in config/sources.yml
+                   --only DATASET downloads one, for example: --only title_ratings
   check <module>   Run a module's checkpoint
   doctor           Check that Docker is installed, running and has enough memory
   help             Show this message
