@@ -61,7 +61,7 @@ Tasks run in order. Each one is a single pull request unless noted, and each is 
 
 ## Phase F: verification
 
-- [ ] **T16. Clean-machine check, Linux.** Covered by CI.
+- [x] **T16. Clean-machine check, Linux.** Covered by CI.
   Done when: T11 is green on `main`.
 
 - [ ] **T17. Clean-machine check, macOS.** **Author**, from a fresh clone with no leftover containers, volumes or images from earlier work.
