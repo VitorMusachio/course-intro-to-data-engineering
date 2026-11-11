@@ -22,13 +22,13 @@ Run it as often as you like:
 
 ## How you know it worked
 
-The script prints the key and a size of several megabytes:
+The script prints the key and its size, about 8 MB:
 
 ```
-imdb/title.ratings.tsv.gz  8.1 MB
+imdb/title.ratings.tsv.gz  8.3 MB
 ```
 
-Then open the console at http://localhost:9001. The `exercise` bucket is there, with a folder `imdb` and your file inside.
+Then open the console at http://localhost:9001/rustfs/console/. The `exercise` bucket is there, with a folder `imdb` and your file inside.
 
 ## What you need to know
 

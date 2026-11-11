@@ -110,7 +110,7 @@ cmd_up() {
   if compose $args up --detach --build --wait --wait-timeout 180; then
     say ""
     say "Ready."
-    say "  Object storage console: http://localhost:9001"
+    say "  Object storage console: http://localhost:9001/rustfs/console/"
     say "  Stop everything with:   ./course down"
   else
     say ""

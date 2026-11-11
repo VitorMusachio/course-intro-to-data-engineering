@@ -24,5 +24,5 @@ print("TODO 2: upload the file")
 
 # TODO 3: list the objects in the bucket. For each one, print its key and
 # its size in megabytes, like this:
-#   imdb/title.ratings.tsv.gz  8.1 MB
+#   imdb/title.ratings.tsv.gz  8.3 MB
 print("TODO 3: list the objects")

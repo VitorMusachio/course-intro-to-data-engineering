@@ -47,7 +47,7 @@ The first time, Docker downloads the images and builds the toolbox. This takes a
 
 ```
 Ready.
-  Object storage console: http://localhost:9001
+  Object storage console: http://localhost:9001/rustfs/console/
   Stop everything with:   ./course down
 ```
 
@@ -61,7 +61,7 @@ Two services are listed, `storage` and `toolbox`, both `healthy`.
 
 ## Step 5: Look at the object storage
 
-Open http://localhost:9001 in your browser. This is the console of your object storage.
+Open http://localhost:9001/rustfs/console/ in your browser. This is the console of your object storage.
 
 Sign in with the values of `S3_ACCESS_KEY_ID` and `S3_SECRET_ACCESS_KEY` from your `.env` file.
 
