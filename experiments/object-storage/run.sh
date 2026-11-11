@@ -50,7 +50,7 @@ toolbox() {
 # ---------------------------------------------------------------- storage --
 
 start_seaweedfs() {
-  STORAGE_IMAGE=chrislusf/seaweedfs:latest
+  STORAGE_IMAGE=chrislusf/seaweedfs:4.53
   ENDPOINT=http://storage:8333
   docker run -d --name storage --network "$NET" \
     -v "$HERE/seaweedfs-s3.json:/etc/seaweedfs/s3.json:ro" \
@@ -83,7 +83,7 @@ start_garage() {
 }
 
 start_rustfs() {
-  STORAGE_IMAGE=rustfs/rustfs:latest
+  STORAGE_IMAGE=rustfs/rustfs:1.0.0
   ENDPOINT=http://storage:9000
   docker run -d --name storage --network "$NET" \
     -e RUSTFS_ACCESS_KEY="$ACCESS_KEY" -e RUSTFS_SECRET_KEY="$SECRET_KEY" \
