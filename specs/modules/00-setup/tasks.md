@@ -1,6 +1,6 @@
 # Module 0 tasks
 
-Status: draft, awaiting author review. Implements `plan.md` in this folder.
+Status: confirmed by the author. Implements `plan.md` in this folder.
 
 Tasks run in order. Each one is a single pull request unless noted, and each is done only when its "Done when" line is true. Tasks marked **Author** need the course author; the rest can be written by an assistant and reviewed.
 
@@ -64,10 +64,10 @@ Tasks run in order. Each one is a single pull request unless noted, and each is 
 - [ ] **T16. Clean-machine check, Linux.** Covered by CI.
   Done when: T11 is green on `main`.
 
-- [ ] **T17. Clean-machine check, macOS.** **Author**, or a tester, on a machine that has never run the course.
+- [ ] **T17. Clean-machine check, macOS.** **Author**, from a fresh clone with no leftover containers, volumes or images from earlier work.
   Done when: the lab is completed as written and the checkpoint passes. Anything that needed outside knowledge is filed as an issue and fixed in the lesson.
 
-- [ ] **T18. Clean-machine check, WSL2.** **Author**, or a tester.
+- [ ] **T18. Clean-machine check, WSL2.** **Author**.
   Done when: same as T17, on Windows through WSL2.
 
 - [ ] **T19. Definition of done.** Walk the five points in section 5 of the constitution against module 0.

@@ -1,6 +1,6 @@
 # Module 0 plan: Setup and course tour
 
-Status: draft, awaiting author review. Implements `spec.md` in this folder.
+Status: decisions in section 3 confirmed by the author. Implements `spec.md` in this folder.
 
 ## 1. Approach in one paragraph
 
@@ -57,7 +57,7 @@ Make was considered and rejected: it is not installed by default on every suppor
 
 ### 3.2 Checkpoint tooling
 
-**Recommendation: pytest, run inside the toolbox container.**
+**Decision: pytest, run inside the toolbox container.**
 
 | Option | For | Against |
 | --- | --- | --- |
@@ -108,7 +108,7 @@ Step 4 needs an Iceberg catalog. The experiment uses a minimal one to get a resu
 
 `checkpoints.yml` runs on every pull request: start the base environment, download the data, run the module 0 checkpoint, stop the environment, then assert that no containers remain and that `git status` is clean.
 
-CI covers Linux only, because GitHub's macOS runners do not provide Docker. macOS and WSL2 are verified by hand before the module is declared done, following a short checklist in `tasks.md`.
+CI covers Linux only, because GitHub's macOS runners do not provide Docker. The author verifies macOS and WSL2 by hand before each module is declared done, following a short checklist in `tasks.md`.
 
 The IMDb download is cached in CI so pull requests do not download it every time.
 
