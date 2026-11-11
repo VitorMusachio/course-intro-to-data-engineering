@@ -1,6 +1,6 @@
 # Toolbox: the Python environment that runs module checkpoints and course
 # scripts, so learners need nothing installed besides Docker.
-FROM python:3.13-slim
+FROM python:3.15-slim
 
 COPY --from=ghcr.io/astral-sh/uv:0.5.11 /uv /usr/local/bin/uv
 
