@@ -28,7 +28,7 @@ A learner who can already program a little and wants to become productive in a d
 6. Write data quality checks at every layer, enforce schema contracts, monitor freshness and run those checks in CI.
 7. Serve curated data to a BI tool.
 8. Build an AI application on top of curated data: an embeddings pipeline, retrieval-augmented generation with a measured evaluation, and an agent that queries the gold layer.
-9. Document a data platform: a data dictionary, lineage, and the decisions behind it.
+9. Document a data platform and make it discoverable: a data dictionary, lineage, the decisions behind it, and a data catalog.
 10. Explain, for each piece, how the laptop setup differs from a production deployment.
 
 ## 3. The project
@@ -68,7 +68,7 @@ Airflow orchestrates every step. CI runs the data tests.
 | 6 | Modeling and transformation with dbt | The gold layer: facts and dimensions, tested and documented | dbt, Trino |
 | 7 | Orchestration with Airflow | DAGs that connect ingestion, Spark and dbt, with backfills and asset-based scheduling | Airflow 3 |
 | 8 | Data quality and CI | A quality strategy across all layers: data tests, schema contracts, freshness checks, failures surfaced in the orchestrator, and a CI pipeline that blocks regressions | dbt tests, GitHub Actions |
-| 9 | Serving and BI | A dashboard on the gold layer | Trino, Metabase |
+| 9 | Serving, BI and the data catalog | A dashboard on the gold layer, and a catalog where every table, its owner, its lineage and its test results can be found | Trino, Metabase, DataHub |
 | 10 | AI on the data platform | An embeddings pipeline, RAG with evaluation, and an agent that queries the gold layer | Postgres with pgvector, a local model, MCP |
 | 11 | Capstone | The whole project, documented and published. Optional cloud deployment track | Everything above, optional cloud |
 
@@ -95,6 +95,7 @@ Two topics are not left to a single module. Each module that produces data contr
 | --- | --- |
 | Every module that produces data | Entries in the project's data dictionary: each table, each column, its meaning and its source |
 | Module 6 | Generated dbt documentation with lineage |
+| Module 9 | A data catalog in DataHub, fed with metadata from the tables, dbt and the orchestrator |
 | Modules with a design choice | A short decision record: the options, the choice, the reason |
 | Module 11 | The project README a hiring manager would read: architecture, how to run it, what it demonstrates |
 
@@ -111,6 +112,8 @@ Two topics are not left to a single module. Each module that produces data contr
 | Transformation | dbt | |
 | Streaming | Kafka | |
 | BI | Metabase | |
+| Data quality | dbt tests | The single quality tool from the gold layer on. Earlier layers use plain Python checks. No dedicated quality framework is added |
+| Data catalog | DataHub | Runs only in the module that uses it. It is the heaviest service in the course, so its memory use is part of the hardware measurement |
 | Vector search | Postgres with pgvector | |
 | LLM | A local model in the labs | Each lesson describes the production alternative with a hosted API |
 
