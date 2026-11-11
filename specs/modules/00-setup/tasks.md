@@ -6,10 +6,10 @@ Tasks run in order. Each one is a single pull request unless noted, and each is 
 
 ## Phase A: skeleton
 
-- [ ] **T01. Repository skeleton.** `.gitignore` (covering `.env` and `data/`), `.env.example`, `LICENSE`, `LICENSE-CONTENT.md`, the folder layout from the plan, and stubs for `docs/stack.md` and `docs/data-dictionary.md`.
+- [x] **T01. Repository skeleton.** `.gitignore` (covering `.env` and `data/`), `.env.example`, `LICENSE`, `LICENSE-CONTENT.md`, the folder layout from the plan, and stubs for `docs/stack.md` and `docs/data-dictionary.md`.
   Done when: the tree matches section 2 of the plan and `.env` cannot be committed.
 
-- [ ] **T02. Toolbox image.** `docker/toolbox/Dockerfile` with a pinned Python, uv, pytest and an S3 client.
+- [x] **T02. Toolbox image.** `docker/toolbox/Dockerfile` with a pinned Python, uv, pytest and an S3 client.
   Done when: the image builds in CI and `pytest --version` runs inside it.
 
 ## Phase B: experiments
