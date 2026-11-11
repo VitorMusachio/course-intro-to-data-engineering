@@ -1,0 +1,24 @@
+# Local configuration and credentials. Copy .env.example to .env.
+.env
+.env.*
+!.env.example
+
+# Datasets are downloaded to each learner's machine, never committed.
+data/*
+!data/.gitkeep
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+.ruff_cache/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Editors and operating systems
+.DS_Store
+.idea/
+.vscode/
+*.swp
