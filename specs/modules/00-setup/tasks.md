@@ -20,7 +20,7 @@ Tasks run in order. Each one is a single pull request unless noted, and each is 
 - [x] **T04. Decision record 0001.** `docs/decisions/0001-object-storage.md`: the options, the results table, the choice, the reason. **Author** confirms the choice.
   Done when: the record is merged and names one candidate.
 
-- [ ] **T05. Experiment B, memory.** A manual workflow that measures peak memory for the base environment, for Spark plus Trino plus storage, and for DataHub alone.
+- [x] **T05. Experiment B, memory.** A manual workflow that measures peak memory for the base environment, for Spark plus Trino plus storage, and for DataHub alone.
   Done when: the workflow has run and its log shows the three figures.
 
 - [ ] **T06. Decision record 0002.** `docs/decisions/0002-hardware-requirement.md`, setting the minimum and recommended memory. If DataHub alone exceeds the minimum, the record lays out the options. **Author** decides.
