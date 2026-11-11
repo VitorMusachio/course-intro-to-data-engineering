@@ -40,7 +40,7 @@ After this module the learner can:
 
 Each criterion is checked by a command. Together they are the module 0 checkpoint.
 
-1. From a clean clone, with only Docker installed, one documented command starts the base environment and exits successfully.
+1. From a clean clone on each supported platform, with only Docker installed, one documented command starts the base environment and exits successfully.
 2. Every service in the base environment reports healthy within 3 minutes.
 3. The object storage answers an S3 API call: a bucket can be created, an object written, read back and deleted.
 4. The data download script fetches the IMDb files into the git-ignored data folder, and a second run downloads nothing.
@@ -56,9 +56,12 @@ Each criterion is checked by a command. Together they are the module 0 checkpoin
 - Installing or configuring Spark, Airflow, Trino, dbt or Kafka. Each arrives in its own module.
 - Any cloud setup.
 
-## 7. Open questions
+## 7. Decisions
+
+- **Supported platforms:** Linux, macOS, and Windows through WSL2. The lesson includes WSL2 setup instructions. Native Windows is not supported.
+
+## 8. To resolve while building this module
 
 1. **Minimum hardware.** Measure the base environment's memory use and set the stated requirement from the measurement.
-2. **Local object storage.** Run the compatibility test and record the choice, with the reason, in `docs/stack.md`.
-3. **Checkpoint tooling.** A plain shell script, pytest, or a small task runner. To be decided in the plan, favouring whatever a beginner can read.
-4. **Operating systems.** Which are supported and tested: Linux and macOS for certain. Windows through WSL2 is likely but needs a decision.
+2. **Local object storage.** Run the compatibility test of SeaweedFS, Garage and RustFS with Iceberg and Spark, and record the choice, with the reason, in `docs/stack.md`.
+3. **Checkpoint tooling.** The plan compares a plain shell script, pytest and a small task runner, and recommends one, favouring whatever a beginner can read.

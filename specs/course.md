@@ -104,9 +104,17 @@ Exact versions are pinned when the environment is built and recorded in `docs/st
 - Vendor-specific warehouses (Snowflake, BigQuery, Redshift, Databricks). Lessons mention how the concepts map to them.
 - Real-time stream processing frameworks beyond producing and consuming with Kafka.
 
-## 8. Open questions
+## 8. Deferred decisions
 
-1. **IMDb data and paid cohorts.** IMDb licenses these datasets for personal and non-commercial use only and does not allow republishing them. Self-paced, free study fits that. Teaching paid cohorts with the same data may not. Decide before the first paid cohort whether to seek permission, or to switch the project to an openly licensed source.
-2. **Minimum hardware.** Is 8 GB of RAM enough if only one module's services run at a time, or does the course require 16 GB?
-3. **Local object storage.** Which of the three candidates passes the compatibility test.
-4. **Local model.** Which model and runtime are small enough for a laptop and good enough for the RAG and agent labs.
+Each of these has an owner moment. None blocks module 0.
+
+| Question | Decision | Resolved when |
+| --- | --- | --- |
+| IMDb data and paid cohorts | Keep IMDb for now. IMDb licenses these datasets for personal and non-commercial use only and does not allow republishing them, which fits free self-paced study but may not fit paid cohorts. Either seek permission or switch to an openly licensed source | Before the first paid cohort |
+| Minimum hardware | Set from a measurement of the environment's real memory use, not from a guess | Module 0 |
+| Local object storage | Chosen by a compatibility test of SeaweedFS, Garage and RustFS with Iceberg and Spark | Module 0 |
+| Local model and runtime | Chosen from what is available when the module is specified | Module 10 spec |
+
+## 9. Supported platforms
+
+Linux, macOS, and Windows through WSL2. Native Windows is not supported.
