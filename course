@@ -30,6 +30,9 @@ Usage: ./course <command>
   data [options]   Download the datasets declared in config/sources.yml
                    --only DATASET downloads one, for example: --only title_ratings
   check <module>   Run a module's checkpoint
+  run <command>    Run a command in the toolbox, for example:
+                   ./course run python modules/00-setup/exercise/upload_dataset.py
+  shell            Open a shell in the toolbox
   doctor           Check that Docker is installed, running and has enough memory
   help             Show this message
 
@@ -107,7 +110,7 @@ cmd_up() {
   if compose $args up --detach --build --wait --wait-timeout 180; then
     say ""
     say "Ready."
-    say "  Object storage console: http://localhost:9001"
+    say "  Object storage console: http://localhost:9001/rustfs/console/"
     say "  Stop everything with:   ./course down"
   else
     say ""
@@ -143,6 +146,23 @@ cmd_data() {
   compose --profile base exec $(exec_flags) toolbox python scripts/download_data.py "$@"
 }
 
+cmd_run() {
+  [ $# -gt 0 ] || fail "Which command? Example: ./course run python --version"
+  require_docker
+  require_env_file
+  toolbox_running || fail "The environment is not running. Start it with: ./course up"
+  # shellcheck disable=SC2046
+  compose --profile base exec $(exec_flags) toolbox "$@"
+}
+
+cmd_shell() {
+  require_docker
+  require_env_file
+  toolbox_running || fail "The environment is not running. Start it with: ./course up"
+  [ -t 0 ] || fail "./course shell needs a terminal. To run one command, use ./course run"
+  compose --profile base exec toolbox bash
+}
+
 cmd_check() {
   local module="${1:-}" dir
   [ -n "$module" ] || fail "Which module? Example: ./course check 0"
@@ -159,7 +179,8 @@ cmd_check() {
   running="$(compose_all ps --status running --services 2>/dev/null | tr '\n' ' ')"
   health="$(compose_all ps --format '{{.Service}}={{.Health}}' 2>/dev/null | tr '\n' ' ')"
   if git -C "$ROOT" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-    git_changes="$(git -C "$ROOT" status --porcelain | head -5 | tr '\n' ';')"
+    # Your own work in a module's exercise folder is expected, so it is left out.
+    git_changes="$(git -C "$ROOT" status --porcelain -- . ':(exclude)modules/*/exercise/*' | head -5 | tr '\n' ';')"
     if [ -z "$git_changes" ]; then git_state=clean; else git_state=dirty; fi
     if git -C "$ROOT" check-ignore -q .env; then env_ignored=yes; else env_ignored=no; fi
     if git -C "$ROOT" ls-files --error-unmatch .env >/dev/null 2>&1; then env_tracked=yes; else env_tracked=no; fi
@@ -234,6 +255,8 @@ case "$command" in
   status)  cmd_status "$@" ;;
   data)    cmd_data "$@" ;;
   check)   cmd_check "$@" ;;
+  run)     cmd_run "$@" ;;
+  shell)   cmd_shell "$@" ;;
   doctor)  cmd_doctor "$@" ;;
   help|-h|--help) usage ;;
   *) usage >&2; fail "Unknown command: $command" ;;

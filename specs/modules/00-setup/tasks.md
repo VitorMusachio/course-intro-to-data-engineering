@@ -47,16 +47,16 @@ Tasks run in order. Each one is a single pull request unless noted, and each is 
 
 ## Phase E: content
 
-- [ ] **T12. Architecture diagram.** `docs/architecture.md`, as a diagram that renders on GitHub.
+- [x] **T12. Architecture diagram.** `docs/architecture.md`, as a diagram that renders on GitHub.
   Done when: every component named in the course spec appears, with its module number.
 
-- [ ] **T13. Lesson.** `modules/00-setup/README.md`, following the outline in the plan.
+- [x] **T13. Lesson.** `modules/00-setup/README.md`, following the outline in the plan.
   Done when: all eight sections exist and every command in the lesson has been run as written.
 
-- [ ] **T14. Lab, exercise and solution.**
+- [x] **T14. Lab, exercise and solution.**
   Done when: following the lab from a clean clone ends in a passing checkpoint, and the solution's commands complete the exercise.
 
-- [ ] **T15. Root README and `docs/stack.md`.** Course description, prerequisites, hardware requirement from record 0002, syllabus with a link to module 0, quick start. Every tool and pinned version in `docs/stack.md`.
+- [x] **T15. Root README and `docs/stack.md`.** Course description, prerequisites, hardware requirement from record 0002, syllabus with a link to module 0, quick start. Every tool, with the file where its version is pinned, in `docs/stack.md`.
   Done when: a newcomer can go from the README to a passing module 0 checkpoint using only what is written there.
 
 ## Phase F: verification

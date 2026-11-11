@@ -1,0 +1,9 @@
+# Scripts run inside Linux containers and under bash, so they must keep Unix
+# line endings even when the repository is cloned on Windows.
+* text=auto
+course text eol=lf
+*.sh text eol=lf
+*.py text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+Dockerfile text eol=lf

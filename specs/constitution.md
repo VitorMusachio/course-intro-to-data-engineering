@@ -18,7 +18,7 @@ The public repository is the complete course. The instructor kit only adds to it
 1. **English only.** Lessons, code, comments, commit messages and specs are written in English.
 2. **One project, start to finish.** Every module adds a piece to the same platform. There are no throwaway examples.
 3. **Runs on a laptop.** The default path needs Docker and nothing else: no cloud account, no credit card, no paid API. Cloud and paid services appear only as clearly marked optional tracks.
-4. **Current stack.** Tools are chosen because they are current and maintained, not because an earlier version of the course used them. Exact versions are pinned and recorded in `docs/stack.md`.
+4. **Current stack.** Tools are chosen because they are current and maintained, not because an earlier version of the course used them. Every tool is pinned to an exact version in the file that uses it, and `docs/stack.md` lists every tool and where its version is pinned.
 5. **Verifiable outcomes.** Every module ends in a checkpoint the learner can run. The same checks run in CI.
 6. **Explain production.** When the laptop version differs from what a team would run in production, the lesson says so and describes the production alternative.
 7. **No secrets in the repository.** Credentials live in a local `.env` that is git-ignored. The repository ships `.env.example` only.
@@ -34,6 +34,8 @@ Every module lives in `modules/NN-slug/` and contains the same parts:
 | Exercise | `exercise/` | A task the learner solves alone, extending the lab |
 | Solution | `solution/` | A reference solution to the exercise |
 | Checkpoint | `checkpoint/` | An automated check that the module's acceptance criteria hold |
+
+Learners do the exercise by editing the files in `exercise/` in place. Checkpoints ignore changes there, so a learner's own work never makes a checkpoint fail.
 
 ## 4. Spec-driven workflow
 
@@ -57,7 +59,7 @@ A module is done when:
 - its checkpoint passes in CI from a clean clone;
 - the lesson, lab, exercise and solution exist and follow the module format;
 - a learner who completed the previous modules can finish it without outside help;
-- every tool version it uses is recorded in `docs/stack.md`;
+- every tool it uses is listed in `docs/stack.md`, with the file where its version is pinned;
 - every table it produces has at least one data quality check and an entry in the data dictionary;
 - the root `README.md` syllabus links to it.
 
