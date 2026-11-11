@@ -10,7 +10,7 @@ services:
   storage:
     # S3-compatible object storage: the data lake lives here.
     # Why RustFS: docs/decisions/0001-object-storage.md
-    image: rustfs/rustfs:1.0.0
+    image: rustfs/rustfs:1.0.4
     profiles: [base]
     environment:
       RUSTFS_ACCESS_KEY: ${S3_ACCESS_KEY_ID:?Create .env first - cp .env.example .env}
