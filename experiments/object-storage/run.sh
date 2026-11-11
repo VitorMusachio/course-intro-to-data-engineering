@@ -158,6 +158,12 @@ docker run --rm --network "$NET" --user root \
     --conf spark.hadoop.fs.s3a.secret.key="$SECRET_KEY" \
     --conf spark.ui.enabled=false \
     /exp/spark_job.py 2>&1 | tee /tmp/spark.log | grep -v -E ' (INFO|WARN) ' | tail -80
+echo "--- first errors reported by Spark"
+grep -E "Exception|Caused by|Error" /tmp/spark.log | grep -v -E "^[[:space:]]+at | INFO | WARN " | head -25
+echo "--- catalog log, errors only"
+docker logs rest 2>&1 | grep -E "Exception|Caused by|ERROR|Status Code|status code" | grep -v -E "^[[:space:]]+at " | head -25
+echo "--- storage log, last lines"
+docker logs storage 2>&1 | tail -25
 echo "::endgroup::"
 for step in spark_parquet iceberg_write iceberg_time_travel; do
   status="$(grep -E "^RESULT $step " /tmp/spark.log | awk '{print $3}' | tail -1)"
@@ -201,9 +207,11 @@ echo "::group::step 6: measurements"
 measure storage_image "$STORAGE_IMAGE"
 measure storage_image_mb "$(docker image inspect "$STORAGE_IMAGE" --format '{{.Size}}' | awk '{printf "%d", $1/1024/1024}')"
 measure storage_memory "$(docker stats --no-stream --format '{{.MemUsage}}' storage | awk '{print $1}')"
-measure storage_version "$(docker exec storage sh -c 'weed version 2>/dev/null || true' 2>/dev/null | head -1 | tr -s ' ' '_')"
+measure storage_digest "$(docker image inspect "$STORAGE_IMAGE" --format '{{index .RepoDigests 0}}' 2>/dev/null)"
 docker stats --no-stream --format 'table {{.Name}}\t{{.MemUsage}}'
 echo "::endgroup::"
+
+echo "::notice title=$CANDIDATE summary::$(printf '%s; ' "${RESULTS[@]}")"
 
 echo
 echo "== $CANDIDATE =="
